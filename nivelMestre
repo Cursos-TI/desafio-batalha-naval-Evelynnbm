@@ -1,0 +1,178 @@
+#include <stdio.h>
+
+//função para adicionar o poder
+int adicionaPoder(int tabuleiro[10][10], int navio[5][5], int linha_centro, int coluna_centro) {
+    // Verifica se está dentro dos limites (desconsiderando caso uma parte esteja fora do limite)
+    if (linha_centro > 9 || coluna_centro > 9)
+        return 1; // Fora do tabuleiro
+
+    //transformando na posição central
+    coluna_centro = coluna_centro - 2;
+    linha_centro = linha_centro - 2;
+
+    // Posiciona navio
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            // evitando que saia da matriz e substitua os barcos por água
+            if (navio[i][j] != 0 &&
+                (linha_centro + i <= 9 && coluna_centro + j <= 9) &&
+                (linha_centro + i >= 0 && coluna_centro + j >= 0)) {
+                tabuleiro[linha_centro + i][coluna_centro + j] = navio[i][j];
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main() {
+    int matriz[10][10] = {0}; // Criação da matriz
+    int canCreate = 1;
+    int erroOcorrido = 0;
+
+    // Coordenadas dos navios
+    int navio_horizontal_x = 1, navio_horizontal_y = 1;
+    int navio_vertical_x = 1, navio_vertical_y = 5;
+    int navio_diagonal1_x = 1, navio_diagonal1_y = 7;
+    int navio_diagonal2_x = 3, navio_diagonal2_y = 7;
+    int poderCone_x = 7, poderCone_y = 7;
+    int poderCruz_x = 7, poderCruz_y = 2;
+    int poderOctaedro_x = 4, poderOctaedro_y = 3;
+
+    // Formato dos poderes
+    int poder_cone[5][5] = {
+        {0, 0, 0, 0, 0},
+        {0, 0, 5, 0, 0},
+        {0, 5, 5, 5, 0},
+        {5, 5, 5, 5, 5},
+        {0, 0, 0, 0, 0}
+    };
+    int poder_cruz[5][5] = {
+        {0, 0, 0, 0, 0},
+        {0, 0, 5, 0, 0},
+        {5, 5, 5, 5, 5},
+        {0, 0, 5, 0, 0},
+        {0, 0, 0, 0, 0}
+    };
+    int poder_octaedro[5][5] = {
+        {0, 0, 0, 0, 0},
+        {0, 0, 5, 0, 0},
+        {0, 5, 5, 5, 0},
+        {0, 0, 5, 0, 0},
+        {0, 0, 0, 0, 0}
+    };
+
+    // ===== navio horizontal =====
+    if (navio_horizontal_x > 9 || navio_horizontal_y + 2 > 9) {
+        canCreate = 0;
+        erroOcorrido = 1;
+    }
+    if (canCreate == 1) {
+        for (int i = 0; i < 3; i++) {
+            matriz[navio_horizontal_x][navio_horizontal_y + i] = 3;
+        }
+    }
+
+    // ===== navio vertical =====
+    if (navio_vertical_x + 2 > 9 || navio_vertical_y > 9) {
+        canCreate = 0;
+        erroOcorrido = 2;
+    }
+    if (canCreate == 1) {
+        for (int i = 0; i < 3; i++) {
+            if (matriz[navio_vertical_x + i][navio_vertical_y] != 0) {
+                canCreate = 0;
+                erroOcorrido = 3;
+                break;
+            }
+        }
+    }
+    if (canCreate == 1) {
+        for (int i = 0; i < 3; i++) {
+            matriz[navio_vertical_x + i][navio_vertical_y] = 3;
+        }
+    }
+
+    // ===== navio diagonal 1 =====
+    if (navio_diagonal1_x + 2 > 9 || navio_diagonal1_y + 2 > 9) {
+        canCreate = 0;
+        erroOcorrido = 4;
+    }
+    if (canCreate == 1) {
+        for (int i = 0; i < 3; i++) {
+            if (matriz[navio_diagonal1_x + i][navio_diagonal1_y + i] != 0) {
+                canCreate = 0;
+                erroOcorrido = 3;
+                break;
+            }
+        }
+    }
+    if (canCreate == 1) {
+        for (int i = 0; i < 3; i++) {
+            matriz[navio_diagonal1_x + i][navio_diagonal1_y + i] = 3;
+        }
+    }
+
+    // ===== navio diagonal 2 =====
+    if (navio_diagonal2_x + 2 > 9 || navio_diagonal2_y + 2 > 9) {
+        canCreate = 0;
+        erroOcorrido = 4;
+    }
+    if (canCreate == 1) {
+        for (int i = 0; i < 3; i++) {
+            if (matriz[navio_diagonal2_x + i][navio_diagonal2_y + i] != 0) {
+                canCreate = 0;
+                erroOcorrido = 3;
+                break;
+            }
+        }
+    }
+    if (canCreate == 1) {
+        for (int i = 0; i < 3; i++) {
+            matriz[navio_diagonal2_x + i][navio_diagonal2_y + i] = 3;
+        }
+    }
+
+    // ===== adiciona poderes =====
+    int poderDeuCerto;
+    poderDeuCerto = adicionaPoder(matriz, poder_cone, poderCone_x, poderCone_y);
+    poderDeuCerto = adicionaPoder(matriz, poder_cruz, poderCruz_x, poderCruz_y);
+    poderDeuCerto = adicionaPoder(matriz, poder_octaedro, poderOctaedro_x, poderOctaedro_y);
+    if (poderDeuCerto == 1) {
+        canCreate = 0;
+        erroOcorrido = 5;
+    }
+
+    // ===== impressão final =====
+    if (canCreate == 1) {
+        printf("Tabuleiro:\n");
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                printf("%d ", matriz[i][j]);
+            }
+            printf("\n");
+        }
+    } else {
+        switch (erroOcorrido) {
+            case 1:
+                printf("O navio horizontal está fora do mapa.\n");
+                break;
+            case 2:
+                printf("O navio vertical está fora do mapa.\n");
+                break;
+            case 3:
+                printf("Tem navio sobrepondo outro navio.\n");
+                break;
+            case 4:
+                printf("Tem um ou mais navios diagonais fora do mapa.\n");
+                break;
+            case 5:
+                printf("Tem poder fora do tabuleiro.\n");
+                break;
+            default:
+                printf("Erro desconhecido.\n");
+        }
+    }
+
+    return 0;
+}
