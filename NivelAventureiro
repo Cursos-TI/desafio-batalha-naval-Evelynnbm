@@ -1,0 +1,126 @@
+#include <stdio.h>
+
+int main() {
+	int matriz[10][10] = {0}; // Criação da matriz
+	int canCreate = 1;
+	int navioErrado = 0;
+
+	// Coordenadas dos navios
+	int navio_horizontal_y = 9, navio_horizontal_x = 7;
+	int navio_vertical_y = 4, navio_vertical_x = 1;
+	int navio_diagonal1_y = 6, navio_diagonal1_x = 3;
+	int navio_diagonal2_y = 7, navio_diagonal2_x = 2;
+
+	// ===== navio horizontal =====
+	//verifica se está dentro da tabela
+	if (navio_horizontal_y > 9 || navio_horizontal_x + 2 > 9) {
+		canCreate = 0;
+		navioErrado = 1;
+	}
+    //faz a criação
+	if (canCreate == 1) {
+		for (int i = 0; i < 3; i++) {
+			matriz[navio_horizontal_y][navio_horizontal_x + i] = 3;
+		}
+	}
+
+	// ====== navio vertical ======
+	//verifica se está dentro da tabela
+	if (navio_vertical_y + 2 > 9 || navio_vertical_x > 9) {
+		canCreate = 0;
+		navioErrado = 2;
+	}
+    //verifica se está sobrepondo
+	if (canCreate == 1) {
+		for (int i = 0; i < 3; i++) {
+			if (matriz[navio_vertical_y + i][navio_vertical_x] != 0) {
+				canCreate = 0;
+				navioErrado = 3;
+				break;
+			}
+		}
+	}
+	
+	//faz a criação
+	if (canCreate == 1) {
+		for (int i = 0; i < 3; i++) {
+			matriz[navio_vertical_y + i][navio_vertical_x] = 3;
+		}
+	}
+
+	// ===== navio diagonalL 1 =====
+	//verifica se está dentro da tabela
+	if (navio_diagonal1_y + 2 > 9 || navio_diagonal1_x + 2 > 9) {
+		canCreate = 0;
+		navioErrado = 4;
+	}
+    //verifica se está sobrepondo
+	if (canCreate == 1) {
+		for (int i = 0; i < 3; i++) {
+			if (matriz[navio_diagonal1_y + i][navio_diagonal1_x + i] != 0) {
+				canCreate = 0;
+				navioErrado = 3;
+				break;
+			}
+		}
+	}
+	//faz a criação
+	if (canCreate == 1) {
+		for (int i = 0; i < 3; i++) {
+			matriz[navio_diagonal1_y + i][navio_diagonal1_x + i] = 3;
+		}
+	}
+
+	// ===== navio diagonal 2 =====
+	//verifica se está dentro da tabela
+	if (navio_diagonal2_y + 2 > 9 || navio_diagonal2_x + 2 > 9) {
+		canCreate = 0;
+		navioErrado = 4;
+	}
+    //verifica se está sobrepondo
+	if (canCreate == 1) {
+		for (int i = 0; i < 3; i++) {
+			if (matriz[navio_diagonal2_y + i][navio_diagonal2_x + i] != 0) {
+				canCreate = 0;
+				navioErrado = 3;
+				break;
+			}
+		}
+	}
+	//faz a criação
+	if (canCreate == 1) {
+		for (int i = 0; i < 3; i++) {
+			matriz[navio_diagonal2_y + i][navio_diagonal2_x + i] = 3;
+		}
+	}
+
+	// ===== impressão final ======
+	if (canCreate == 1) {
+		printf("Matriz:\n");
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 10; j++) {
+				printf("%d ", matriz[i][j]);
+			}
+			printf("\n");
+		}
+	} else {
+		switch (navioErrado) {
+			case 1:
+				printf("O navio horizontal está fora do mapa.\n");
+				break;
+			case 2:
+				printf("O navio vertical está fora do mapa.\n");
+				break;
+			case 4:
+				printf("Tem um ou mais navios diagonais fora do mapa.\n");
+				break;
+			case 3:
+				printf("Tem navio sobrepondo outro navio.\n");
+				break;
+			default:
+				printf("Erro desconhecido.\n");
+		}
+	}
+
+	return 0;
+}
